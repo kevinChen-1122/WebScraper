@@ -1,0 +1,7 @@
+
+.DS_Store
+.idea/
+__pycache__/
+*.pyc
+/crawler_service/log/
+/crawler_service/data/

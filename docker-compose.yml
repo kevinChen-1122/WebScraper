@@ -1,0 +1,15 @@
+version: '3.9'
+services:
+  crawler-service:
+    container_name: crawler-service
+    build:
+      context: crawler_service
+      dockerfile: Dockerfile
+    volumes:
+      - ./crawler_service:/app/crawler_service
+    ports:
+      - "7001:7001"
+    environment:
+      - DISPLAY=:99
+      - TZ=:Asia/Taipei
+      - PYTHONPATH=:/app/crawler_service
