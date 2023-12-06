@@ -8,6 +8,9 @@ import random
 from .logger import get_logger
 import json
 
+def get_random_sleep_time():
+    return random.randrange(5)
+
 def initialize_driver():
     options = Options()
     options.binary_location = "/usr/bin/chromium"
@@ -35,7 +38,6 @@ def initialize_driver():
     })
     return driver
 
-
 def extract_product_data(product):
     seller_id_element = product.find_elements(By.XPATH, ".//p[@data-testid='listing-card-text-seller-name']")
     product_link_element = product.find_elements(By.XPATH, ".//a[starts-with(@href, '/p')]")
@@ -54,7 +56,7 @@ def search_product(url):
     try:
         driver = initialize_driver()
         driver.get(url)
-        time.sleep(5)
+        time.sleep(4+get_random_sleep_time())
 
         # print(driver.page_source)
 
