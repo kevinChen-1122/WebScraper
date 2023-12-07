@@ -1,7 +1,4 @@
 from datetime import datetime
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 import time
 import random
@@ -10,33 +7,6 @@ import json
 
 def get_random_sleep_time():
     return random.randrange(5)
-
-def initialize_driver():
-    options = Options()
-    options.binary_location = "/usr/bin/chromium"
-
-    options.add_argument("--headless")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--disable-blink-features")
-    options.add_argument("--disable-blink-features=AutomationControlled")
-
-    options.add_experimental_option('useAutomationExtension', False)
-    user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 9_13_2) AppleWebKit/613.1.89 (KHTML, like Gecko) Version/10.1.4 Safari/611.2.4"
-    options.add_argument('--user-agent=%s' % user_agent)
-    options.add_experimental_option("excludeSwitches", ['enable-automation'])
-
-    s = Service("/usr/bin/chromedriver")
-    driver = webdriver.Chrome(service=s, options=options)
-
-    driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
-        "source": """
-                        Object.defineProperty(navigator, 'webdriver', {
-                          get: () => undefined
-                        })
-                      """
-    })
-    return driver
 
 def extract_product_data(product):
     seller_id_element = product.find_elements(By.XPATH, ".//p[@data-testid='listing-card-text-seller-name']")
@@ -51,10 +21,10 @@ def extract_product_data(product):
         "price": price_element[0].text if price_element else ""
     }
 
-def search_product(url):
+def search_product(url, driver_pool):
     driver = None
     try:
-        driver = initialize_driver()
+        driver = driver_pool.pop()
         driver.get(url)
         time.sleep(4+get_random_sleep_time())
 
@@ -78,4 +48,4 @@ def search_product(url):
         raise
     finally:
         if driver:
-            driver.quit()
+            driver_pool.append(driver)
