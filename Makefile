@@ -1,4 +1,4 @@
-SERVICES := crawler-service
+SERVICES := crawler-service database-service
 
 .PHONY: all build start stop restart logs clean
 

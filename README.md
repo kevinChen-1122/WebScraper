@@ -20,6 +20,12 @@ WebScraper
 │  ├─ main.py
 │  ├─ README.md
 │  └─ requirements.txt
+├─ database_service/
+│  └─ config/
+│  │  └─ mongod.conf
+│  └─ data/
+│  └─ log/
+│  └─ Dockerfile
 ├─ .gitattributes
 ├─ .gitignore
 ├─ docker-compose.yml

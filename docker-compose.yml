@@ -13,3 +13,25 @@ services:
       - DISPLAY=:99
       - TZ=:Asia/Taipei
       - PYTHONPATH=:/app/crawler_service
+
+  database-service:
+    container_name: database-service
+    restart: always
+    build:
+      context: database_service
+      dockerfile: Dockerfile
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./database_service/data:/data/db
+      - ./database_service/log:/var/log/mongodb
+    environment:
+      - MONGO_INITDB_DATABASE=web_scraper
+      - TZ=:Asia/Taipei
+      - MONGO_INITDB_ROOT_USERNAME=
+      - MONGO_INITDB_ROOT_PASSWORD=
+    logging:
+      driver: 'json-file'
+      options:
+        max-file: '10'
+        max-size: '1024m'

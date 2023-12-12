@@ -5,3 +5,4 @@ __pycache__/
 *.pyc
 /crawler_service/log/
 /crawler_service/data/
+/database_service/data/
