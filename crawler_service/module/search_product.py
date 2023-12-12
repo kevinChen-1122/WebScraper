@@ -4,9 +4,12 @@ import time
 import random
 from .logger import get_logger
 import json
+import re
+
 
 def get_random_sleep_time():
     return random.randrange(5)
+
 
 def extract_product_data(product):
     seller_id_element = product.find_elements(By.XPATH, ".//p[@data-testid='listing-card-text-seller-name']")
@@ -21,16 +24,19 @@ def extract_product_data(product):
         "price": price_element[0].text if price_element else ""
     }
 
+
 def search_product(url, driver_pool):
     driver = None
     try:
         driver = driver_pool.pop()
         driver.get(url)
-        time.sleep(4+get_random_sleep_time())
+        time.sleep(4 + get_random_sleep_time())
 
         # print(driver.page_source)
 
-        product_list = driver.find_elements(By.XPATH, "//main[@id='main']/div[2]/div/section[3]/div[1]/div/div/div[1]/div[not(@data-google-query-id) and not(descendant::*[@data-google-query-id])]")
+        product_list = driver.find_elements(By.XPATH,
+                                            "//main[@id='main']/div[2]/div/section[3]/div[1]/div/div/div[1]/div[not("
+                                            "@data-google-query-id) and not(descendant::*[@data-google-query-id])]")
         results = []
 
         now = datetime.now()
@@ -38,9 +44,11 @@ def search_product(url, driver_pool):
 
         for product in product_list:
             product_data = extract_product_data(product)
-            results.append({**product_data, "page_source":product.get_attribute('outerHTML'), "created_at": timestamp})
+            results.append({**product_data, "page_source": product.get_attribute('outerHTML'), "created_at": timestamp})
 
-        filename = f"data/{timestamp}.txt"
+        pattern = r"/search/(.*?)\?"
+        match = re.search(pattern, url)
+        filename = f"data/{timestamp}({match.group(1)}).txt"
         with open(filename, 'w', encoding='utf-8') as f:
             json.dump(results, f, ensure_ascii=False, indent=4)
     except Exception as e:

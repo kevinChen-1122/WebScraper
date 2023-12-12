@@ -1,11 +1,14 @@
-from selenium import webdriver
+import time
+import schedule
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from selenium import webdriver
 from module import search_product, url_generator, logger
 from config import config
 
-def init_driver_pool(pool_size=4):
+
+def initialize_browser_pool(pool_size=2):
     driver_pool = []
     for _ in range(pool_size):
         options = Options()
@@ -18,7 +21,8 @@ def init_driver_pool(pool_size=4):
         options.add_argument("--disable-blink-features=AutomationControlled")
 
         options.add_experimental_option('useAutomationExtension', False)
-        user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 9_13_2) AppleWebKit/613.1.89 (KHTML, like Gecko) Version/10.1.4 Safari/611.2.4"
+        user_agent = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 9_13_2) AppleWebKit/613.1.89 (KHTML, like Gecko) "
+                      "Version/10.1.4 Safari/611.2.4")
         options.add_argument('--user-agent=%s' % user_agent)
         options.add_experimental_option("excludeSwitches", ['enable-automation'])
 
@@ -27,28 +31,30 @@ def init_driver_pool(pool_size=4):
 
         driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
             "source": """
-                                Object.defineProperty(navigator, 'webdriver', {
-                                  get: () => undefined
-                                })
-                              """
+                Object.defineProperty(navigator, 'webdriver', {
+                  get: () => undefined
+                })
+            """
         })
 
         driver_pool.append(driver)
 
     return driver_pool
 
-def main():
-    urls = [url_generator.get_search_url(item["key_word"], item["price_start"], item["price_end"]) for item in config.key_word]
 
-    driver_pool = init_driver_pool(4)
+def start_search_product_task():
+    urls = [url_generator.get_search_url(item["key_word"], item["price_start"], item["price_end"]) for item in
+            config.key_word]
 
-    with ThreadPoolExecutor(max_workers=4) as executor:
+    driver_pool = initialize_browser_pool(8)
+
+    with ThreadPoolExecutor(max_workers=8) as executor:
         futures = {executor.submit(search_product.search_product, url, driver_pool): url for url in urls}
 
         for future in as_completed(futures):
             url = futures[future]
             try:
-                result = future.result()
+                future.result()
             except Exception as e:
                 new_log = logger.get_logger()
                 new_log.error(f"Error processing url {url}: {e}")
@@ -56,6 +62,24 @@ def main():
     for driver in driver_pool:
         driver.quit()
     driver_pool.clear()
+
+
+# 任務調度
+def schedule_tasks():
+    schedule.every(2).minutes.do(start_search_product_task)
+
+
+def main():
+    try:
+        schedule_tasks()
+
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
+    except Exception as e:
+        new_log = logger.get_logger()
+        new_log.error(f"Error processing : {e}")
+
 
 if __name__ == "__main__":
     main()

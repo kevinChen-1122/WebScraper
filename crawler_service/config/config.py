@@ -6,45 +6,45 @@ price_start_default = 0
 price_end_default = 95000
 # 搜尋參數
 query_params = {
-    "addRecent" : "true",
-    "canChangeKeyword" : "true",
-    "includeSuggestions" : "true",
-    "price_start" : 0,
-    "price_end" : 95000,
-    "sort_by" : 4,
-    "t-search_query_source" : "direct_search"
+    "addRecent": "true",
+    "canChangeKeyword": "true",
+    "includeSuggestions": "true",
+    "price_start": 0,
+    "price_end": 95000,
+    "sort_by": 4,
+    "t-search_query_source": "direct_search"
 }
 
 key_word = [
     {
-        "key_word" : "iphone",
-        "price_start" : 2500,
-        "price_end" : 45000
+        "key_word": "iphone",
+        "price_start": 2500,
+        "price_end": 45000
     },
     {
-        "key_word" : "ipad",
-        "price_start" : 4000,
-        "price_end" : 45000
+        "key_word": "ipad",
+        "price_start": 4000,
+        "price_end": 45000
     },
     {
-        "key_word" : "macbook",
-        "price_start" : 5000,
-        "price_end" : 75000
+        "key_word": "macbook",
+        "price_start": 5000,
+        "price_end": 75000
     },
     {
-        "key_word" : "apple watch",
-        "price_start" : 2500,
-        "price_end" : 45000
+        "key_word": "apple watch",
+        "price_start": 2500,
+        "price_end": 45000
     },
     {
-        "key_word" : "switch",
-        "price_start" : 200,
-        "price_end" : 45000
+        "key_word": "switch",
+        "price_start": 200,
+        "price_end": 45000
     },
     {
-        "key_word" : "ps4",
-        "price_start" : 200,
-        "price_end" : 45000
+        "key_word": "ps4",
+        "price_start": 200,
+        "price_end": 45000
     },
     {
         "key_word": "ps5",

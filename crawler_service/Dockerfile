@@ -16,4 +16,4 @@ COPY . /app/crawler_service
 
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-CMD ["tail", "-f", "/dev/null"]
+CMD python3 main.py & tail -f /dev/null
