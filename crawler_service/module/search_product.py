@@ -4,14 +4,20 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 import random
-from .logger import get_logger
 from . import mongo_module
+from urllib.parse import urlparse, urlunparse
+from .logger import get_logger
 import json
 import re
 
 
 def get_random_sleep_time():
     return random.randrange(4)
+
+
+def parse_url(url):
+    parsed_url = urlparse(url)
+    return urlunparse(parsed_url._replace(query=''))
 
 
 def extract_product_data(product):
@@ -22,7 +28,7 @@ def extract_product_data(product):
 
     return {
         "seller_id": seller_id_element[0].text if seller_id_element else "",
-        "product_link": product_link_element[0].get_attribute("href") if product_link_element else "",
+        "product_link": parse_url(product_link_element[0].get_attribute("href")) if product_link_element else "",
         "product_name": product_name_element[0].get_attribute("title") if product_name_element else "",
         "price": price_element[0].text if price_element else ""
     }
