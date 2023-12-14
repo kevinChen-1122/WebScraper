@@ -44,11 +44,11 @@ def initialize_browser_pool(pool_size=2):
 
 def start_search_product_task():
     urls = [url_generator.get_search_url(item["key_word"], item["price_start"], item["price_end"]) for item in
-            config.key_word]
+            config.keyword]
 
-    driver_pool = initialize_browser_pool(8)
+    driver_pool = initialize_browser_pool(6)
 
-    with ThreadPoolExecutor(max_workers=8) as executor:
+    with ThreadPoolExecutor(max_workers=6) as executor:
         futures = {executor.submit(search_product.search_product, url, driver_pool): url for url in urls}
 
         for future in as_completed(futures):
@@ -66,7 +66,7 @@ def start_search_product_task():
 
 # 任務調度
 def schedule_tasks():
-    schedule.every(2).minutes.do(start_search_product_task)
+    schedule.every(5).minutes.do(start_search_product_task)
 
 
 def main():

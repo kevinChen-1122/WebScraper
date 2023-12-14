@@ -1,14 +1,17 @@
 from datetime import datetime
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import time
 import random
 from .logger import get_logger
+from . import mongo_module
 import json
 import re
 
 
 def get_random_sleep_time():
-    return random.randrange(5)
+    return random.randrange(4)
 
 
 def extract_product_data(product):
@@ -29,28 +32,44 @@ def search_product(url, driver_pool):
     driver = None
     try:
         driver = driver_pool.pop()
+        time.sleep(get_random_sleep_time())
         driver.get(url)
         time.sleep(4 + get_random_sleep_time())
-
         # print(driver.page_source)
+
+        now = datetime.now()
+        timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
+
+        db = mongo_module.connect_to_mongodb()
+        collection = db['get_url_log']
+        mongo_module.insert_document(collection,
+                                     {"page": driver.page_source, "created_at": timestamp, "type": "index_page"})
+
+        WebDriverWait(driver, 2).until(
+            EC.presence_of_element_located((By.XPATH,
+                                            "//main[@id='main']/div[2]/div/section[3]/div[1]/div/div/div[1]/div[not("
+                                            "@data-google-query-id) and not(descendant::*[@data-google-query-id])]"))
+        )
 
         product_list = driver.find_elements(By.XPATH,
                                             "//main[@id='main']/div[2]/div/section[3]/div[1]/div/div/div[1]/div[not("
                                             "@data-google-query-id) and not(descendant::*[@data-google-query-id])]")
         results = []
 
-        now = datetime.now()
-        timestamp = now.strftime("%Y-%m-%d_%H-%M-%S")
-
         for product in product_list:
             product_data = extract_product_data(product)
             results.append({**product_data, "page_source": product.get_attribute('outerHTML'), "created_at": timestamp})
 
-        pattern = r"/search/(.*?)\?"
-        match = re.search(pattern, url)
-        filename = f"data/{timestamp}({match.group(1)}).txt"
-        with open(filename, 'w', encoding='utf-8') as f:
-            json.dump(results, f, ensure_ascii=False, indent=4)
+        if results:
+            # db = mongo_module.connect_to_mongodb()
+            collection = db['search_product']
+            mongo_module.update_documents(collection, results)
+
+        # pattern = r"/search/(.*?)\?"
+        # match = re.search(pattern, url)
+        # filename = f"data/{timestamp}({match.group(1)}).txt"
+        # with open(filename, 'w', encoding='utf-8') as f:
+        #     json.dump(results, f, ensure_ascii=False, indent=4)
     except Exception as e:
         print(f"Error occurred while processing {url}: {e}")
         raise

@@ -1,0 +1,9 @@
+{
+    "addRecent": "true",
+    "canChangeKeyword": "true",
+    "includeSuggestions": "true",
+    "price_start": 0,
+    "price_end": 95000,
+    "sort_by": 4,
+    "t-search_query_source": "direct_search"
+}
