@@ -5,12 +5,16 @@ WebScraper
 ├─ crawler_service/
 │  ├─ config/
 │  │  ├─ __init__.py
+│  │  ├─ carousell_query_params.json
+│  │  ├─ carousell_search_keyword.json
+│  │  ├─ config.ini
 │  │  └─ config.py
 │  ├─ data/
 │  ├─ log/
 │  ├─ module/
 │  │  ├─ __init__.py
 │  │  ├─ logger.py
+│  │  ├─ mongo_module.py
 │  │  ├─ search_product.py
 │  │  └─ url_generator.py
 │  ├─ test/
