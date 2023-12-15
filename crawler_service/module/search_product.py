@@ -12,7 +12,7 @@ import re
 
 
 def get_random_sleep_time():
-    return random.randrange(4)
+    return random.randrange(3)
 
 
 def parse_url(url):
@@ -81,4 +81,5 @@ def search_product(url, driver_pool):
         raise
     finally:
         if driver:
+            driver.get("about:blank")
             driver_pool.append(driver)
