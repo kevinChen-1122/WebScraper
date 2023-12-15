@@ -4,6 +4,6 @@
     "includeSuggestions": "true",
     "price_start": 0,
     "price_end": 95000,
-    "sort_by": 4,
+    "sort_by": 3,
     "t-search_query_source": "direct_search"
 }

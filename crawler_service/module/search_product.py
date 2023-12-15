@@ -49,7 +49,7 @@ def search_product(url, driver_pool):
         db = mongo_module.connect_to_mongodb()
         collection = db['get_url_log']
         mongo_module.insert_document(collection,
-                                     {"page": driver.page_source, "created_at": timestamp, "type": "index_page"})
+                                     {"search_url": url, "page": driver.page_source, "created_at": timestamp})
 
         WebDriverWait(driver, 2).until(
             EC.presence_of_element_located((By.XPATH,
