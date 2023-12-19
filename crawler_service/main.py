@@ -4,8 +4,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium import webdriver
-from module import search_product, url_generator, logger
-from config import config
+from module import search_product_module, generator_url_module, logger_module
 
 
 def initialize_browser_pool(pool_size=2):
@@ -43,20 +42,18 @@ def initialize_browser_pool(pool_size=2):
 
 
 def start_search_product_task():
-    urls = [url_generator.get_search_url(item["key_word"], item["price_start"], item["price_end"]) for item in
-            config.keyword]
-
+    urls = generator_url_module.get_search_url()
     driver_pool = initialize_browser_pool(6)
 
     with ThreadPoolExecutor(max_workers=6) as executor:
-        futures = {executor.submit(search_product.search_product, url, driver_pool): url for url in urls}
+        futures = {executor.submit(search_product_module.search_product, url, driver_pool): url for url in urls}
 
         for future in as_completed(futures):
             url = futures[future]
             try:
                 future.result()
             except Exception as e:
-                new_log = logger.get_logger()
+                new_log = logger_module.get_logger()
                 new_log.error(f"Error processing url {url}: {e}")
 
     for driver in driver_pool:
@@ -77,7 +74,7 @@ def main():
             schedule.run_pending()
             time.sleep(1)
     except Exception as e:
-        new_log = logger.get_logger()
+        new_log = logger_module.get_logger()
         new_log.error(f"Error processing : {e}")
 
 

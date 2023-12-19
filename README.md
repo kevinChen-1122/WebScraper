@@ -13,13 +13,12 @@ WebScraper
 │  ├─ log/
 │  ├─ module/
 │  │  ├─ __init__.py
-│  │  ├─ logger.py
+│  │  ├─ generator_url_module.py
+│  │  ├─ logger_module.py
 │  │  ├─ mongo_module.py
-│  │  ├─ search_product.py
-│  │  └─ url_generator.py
+│  │  └─ search_product_module.py
 │  ├─ test/
-│  │  ├─ __init__.py
-│  │  └─ test.py
+│  │  └─ __init__.py
 │  ├─ Dockerfile
 │  ├─ main.py
 │  ├─ README.md
