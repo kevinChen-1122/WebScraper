@@ -14,6 +14,7 @@ WebScraper
 │  ├─ module/
 │  │  ├─ __init__.py
 │  │  ├─ generator_url_module.py
+│  │  ├─ line_notify_module.py
 │  │  ├─ logger_module.py
 │  │  ├─ mongo_module.py
 │  │  └─ search_product_module.py
