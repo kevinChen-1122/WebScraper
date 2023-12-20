@@ -3,12 +3,16 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 import random
-from . import mongo_module
+from . import mongo_module, line_notify_module
 from urllib.parse import urlparse, urlunparse
 from datetime import datetime, timedelta
 from .logger_module import get_logger
 import json
 import re
+
+
+def is_new_product(string_of_since_at):
+    return string_of_since_at and int(parse_relative_time(string_of_since_at)) < 300
 
 
 def get_random_sleep_time():
@@ -106,6 +110,12 @@ def search_product(url, driver_pool):
         for product in product_list:
             product_data = extract_product_data(product)
             results.append({**product_data, "page_source": product.get_attribute('outerHTML'), "created_at": timestamp})
+
+            collection = db['line_notify_log']
+            msg = "新商品\n" + product_data["product_link"]
+            if is_new_product(product_data["product_add_since"]) and not mongo_module.find_documents(collection,
+                                                                                                     {"msg": msg}):
+                line_notify_module.send_line_notify(msg)
 
         if results:
             collection = db['search_product']
