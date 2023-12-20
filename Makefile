@@ -11,7 +11,11 @@ build:
     done
 
 up:
+ifdef $(service)
+	@docker-compose up -d $(service)
+else
 	@docker-compose up -d
+endif
 
 down:
 	@docker-compose down
@@ -19,10 +23,14 @@ down:
 restart: down up
 
 logs:
+ifdef $(service)
+	@docker-compose logs -f $(service)
+else
 	@docker-compose logs -f
+endif
 
 clean:
 	@docker-compose down --volumes
 
 shell:
-	@docker exec -it $(t) /bin/bash
+	@docker exec -it $(service) /bin/bash

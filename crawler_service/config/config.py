@@ -21,3 +21,6 @@ with open(query_params_file_path, 'r') as json_file:
 
 with open(keyword_file_path, 'r') as json_file:
     keyword = json.load(json_file)
+
+# line 通知設定
+line_notify_token = config['line']['notify_token']

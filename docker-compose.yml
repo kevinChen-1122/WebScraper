@@ -13,6 +13,8 @@ services:
       - DISPLAY=:99
       - TZ=:Asia/Taipei
       - PYTHONPATH=:/app/crawler_service
+    networks:
+      - scraper-network
 
   database-service:
     container_name: database-service
@@ -35,3 +37,8 @@ services:
       options:
         max-file: '10'
         max-size: '1024m'
+    networks:
+      - scraper-network
+
+networks:
+  scraper-network:
