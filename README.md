@@ -52,8 +52,9 @@ WebScraper
     ```
 - enter container
     ```
-    make shell t= {container_name}
+    make shell service= {container_name}
     ```
   container_name :
   - crawler-service
+  - database-service
 ---
