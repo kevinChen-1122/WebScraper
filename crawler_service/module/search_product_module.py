@@ -3,7 +3,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 import random
-from . import mongo_module, line_notify_module
+from module import mongo_module, line_notify_module, get_config_module
 from urllib.parse import urlparse, urlunparse
 from datetime import datetime, timedelta
 from .logger_module import get_logger
@@ -85,7 +85,6 @@ def search_product(url, driver_pool):
         driver = driver_pool.pop()
         time.sleep(get_random_sleep_time())
         driver.get(url)
-        time.sleep(4 + get_random_sleep_time())
         # print(driver.page_source)
 
         now = datetime.now()
@@ -96,15 +95,19 @@ def search_product(url, driver_pool):
         mongo_module.insert_document(collection,
                                      {"search_url": url, "page": driver.page_source, "created_at": timestamp})
 
-        WebDriverWait(driver, 2).until(
+        WebDriverWait(driver, 5).until(
             EC.presence_of_element_located((By.XPATH,
                                             "//main[@id='main']/div[2]/div/section[3]/div[1]/div/div/div[1]/div[not("
                                             "@data-google-query-id) and not(descendant::*[@data-google-query-id])]"))
         )
 
+        time.sleep(2)
+
         product_list = driver.find_elements(By.XPATH,
                                             "//main[@id='main']/div[2]/div/section[3]/div[1]/div/div/div[1]/div[not("
                                             "@data-google-query-id) and not(descendant::*[@data-google-query-id])]")
+
+        time.sleep(2)
         results = []
 
         for product in product_list:
@@ -112,7 +115,7 @@ def search_product(url, driver_pool):
             results.append({**product_data, "page_source": product.get_attribute('outerHTML'), "created_at": timestamp})
 
             collection = db['line_notify_log']
-            msg = "新商品\n" + product_data["product_link"]
+            msg = "新商品\n" + product_data["product_name"] + "\n" + product_data["product_link"]
             if is_new_product(product_data["product_add_since"]) and not mongo_module.find_documents(collection,
                                                                                                      {"msg": msg}):
                 line_notify_module.send_line_notify(msg)

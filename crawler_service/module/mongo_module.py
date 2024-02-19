@@ -1,12 +1,12 @@
 import pymongo
-from config import config
+from module import get_config_module
 
 
 def connect_to_mongodb():
     try:
-        client = pymongo.MongoClient(config.mongo_host, config.mongo_port, username=config.username,
-                                     password=config.password)
-        db = client[config.database_name]
+        client = pymongo.MongoClient(get_config_module.mongo_host, get_config_module.mongo_port, username=get_config_module.username,
+                                     password=get_config_module.password)
+        db = client[get_config_module.database_name]
         return db
     except pymongo.errors.ConnectionFailure as e:
         print(f"Failed to connect to MongoDB: {e}")

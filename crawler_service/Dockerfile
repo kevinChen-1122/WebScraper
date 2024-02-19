@@ -7,13 +7,17 @@ RUN apt-get update && apt-get install -y \
     chromium \
     chromium-driver \
     vim \
-    tzdata
+    tzdata \
+    cron
 
 # update timezone
 RUN ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && dpkg-reconfigure --frontend noninteractive tzdata
 
 COPY . /app/crawler_service
+COPY ./config/crontab /etc/cron.d/crontab
 
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-CMD ["python3", "main.py"]
+RUN chmod 0644 /etc/cron.d/crontab
+
+CMD ["/usr/sbin/cron", "-f"]

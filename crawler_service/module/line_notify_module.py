@@ -1,12 +1,11 @@
 import requests
-from . import mongo_module
+from module import mongo_module, get_config_module
 from datetime import datetime
-from config import config
 
 
 def send_line_notify(msg, sticker_package_id="", sticker_id=""):
     try:
-        token = config.line_notify_token
+        token = get_config_module.line_notify_token
         if not token:
             raise ValueError("Line Notify token is empty.")
 

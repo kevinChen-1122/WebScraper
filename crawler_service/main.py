@@ -1,5 +1,4 @@
 import time
-import schedule
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
@@ -61,18 +60,9 @@ def start_search_product_task():
     driver_pool.clear()
 
 
-# 任務調度
-def schedule_tasks():
-    schedule.every(5).minutes.do(start_search_product_task)
-
-
 def main():
     try:
-        schedule_tasks()
-
-        while True:
-            schedule.run_pending()
-            time.sleep(1)
+        start_search_product_task()
     except Exception as e:
         new_log = logger_module.get_logger()
         new_log.error(f"Error processing : {e}")

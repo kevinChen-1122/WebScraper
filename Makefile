@@ -36,5 +36,7 @@ endif
 clean:
 	@docker-compose down --volumes
 
-shell:
+bash:
+ifdef service
 	@docker exec -it $(service) /bin/bash
+endif

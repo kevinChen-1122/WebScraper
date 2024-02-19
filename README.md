@@ -8,12 +8,13 @@ WebScraper
 │  │  ├─ carousell_query_params.json
 │  │  ├─ carousell_search_keyword.json
 │  │  ├─ config.ini
-│  │  └─ config.py
+│  │  └─ crontab
 │  ├─ data/
 │  ├─ log/
 │  ├─ module/
 │  │  ├─ __init__.py
 │  │  ├─ generator_url_module.py
+│  │  ├─ get_config_module.py
 │  │  ├─ line_notify_module.py
 │  │  ├─ logger_module.py
 │  │  ├─ mongo_module.py
@@ -52,7 +53,7 @@ WebScraper
     ```
 - enter container
     ```
-    make shell service= {container_name}
+    make bash service= {container_name}
     ```
   container_name :
   - crawler-service

@@ -2,7 +2,7 @@ import configparser
 import json
 
 config = configparser.ConfigParser()
-config.read('config/config.ini')
+config.read('/app/crawler_service/config/config.ini')
 
 # mongodb 設定
 mongo_host = config['mongodb']['host_name']
