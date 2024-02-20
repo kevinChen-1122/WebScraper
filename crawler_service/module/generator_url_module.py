@@ -1,4 +1,4 @@
-from module import get_config_module
+from . import get_config_module
 from urllib.parse import urlencode
 
 

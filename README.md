@@ -13,6 +13,7 @@ WebScraper
 │  ├─ log/
 │  ├─ module/
 │  │  ├─ __init__.py
+│  │  ├─ browser_pool_module.py
 │  │  ├─ generator_url_module.py
 │  │  ├─ get_config_module.py
 │  │  ├─ line_notify_module.py

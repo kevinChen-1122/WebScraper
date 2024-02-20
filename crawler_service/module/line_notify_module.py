@@ -1,5 +1,5 @@
 import requests
-from module import mongo_module, get_config_module
+from . import mongo_module, get_config_module
 from datetime import datetime
 
 

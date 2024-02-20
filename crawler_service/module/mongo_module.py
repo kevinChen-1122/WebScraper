@@ -1,5 +1,5 @@
 import pymongo
-from module import get_config_module
+from . import get_config_module
 
 
 def connect_to_mongodb():

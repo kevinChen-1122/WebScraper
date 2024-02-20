@@ -3,11 +3,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 import random
-from module import mongo_module, line_notify_module, get_config_module
+from . import mongo_module, line_notify_module
 from urllib.parse import urlparse, urlunparse
 from datetime import datetime, timedelta
-from .logger_module import get_logger
-import json
 import re
 
 
@@ -82,10 +80,9 @@ def extract_product_data(product):
 def search_product(url, driver_pool):
     driver = None
     try:
-        driver = driver_pool.pop()
+        driver = driver_pool.get_driver()
         time.sleep(get_random_sleep_time())
         driver.get(url)
-        # print(driver.page_source)
 
         now = datetime.now()
         timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
@@ -124,15 +121,10 @@ def search_product(url, driver_pool):
             collection = db['search_product']
             mongo_module.update_documents(collection, results)
 
-        # pattern = r"/search/(.*?)\?"
-        # match = re.search(pattern, url)
-        # filename = f"data/{timestamp}({match.group(1)}).txt"
-        # with open(filename, 'w', encoding='utf-8') as f:
-        #     json.dump(results, f, ensure_ascii=False, indent=4)
     except Exception as e:
         print(f"Error occurred while processing {url}: {e}")
         raise
     finally:
         if driver:
             driver.get("about:blank")
-            driver_pool.append(driver)
+            driver_pool.release_driver(driver)
