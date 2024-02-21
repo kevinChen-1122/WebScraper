@@ -2,11 +2,24 @@
 ## Project Structure
 ```
 WebScraper
+├─ cloud_service/
+│  ├─ config/
+│  │  ├─ config.ini
+│  │  └─ crontab
+│  ├─ module/
+│  │  ├─ __init__.py
+│  │  ├─ get_config_module.py
+│  │  ├─ google_spreadsheets_module.py
+│  │  ├─ logger_module.py
+│  │  └─ mongo_module.py
+│  ├─ Dockerfile
+│  ├─ main.py
+│  ├─ README.md
+│  └─ requirements.txt
 ├─ crawler_service/
 │  ├─ config/
 │  │  ├─ __init__.py
 │  │  ├─ carousell_query_params.json
-│  │  ├─ carousell_search_keyword.json
 │  │  ├─ config.ini
 │  │  └─ crontab
 │  ├─ data/

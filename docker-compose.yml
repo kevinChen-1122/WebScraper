@@ -40,5 +40,20 @@ services:
     networks:
       - scraper-network
 
+  cloud-service:
+    container_name: cloud-service
+    build:
+      context: cloud_service
+      dockerfile: Dockerfile
+    volumes:
+      - ./cloud_service:/app/cloud_service
+    ports:
+      - "7002:7002"
+    environment:
+      - TZ=:Asia/Taipei
+      - PYTHONPATH=:/app/cloud_service
+    networks:
+      - scraper-network
+
 networks:
   scraper-network:

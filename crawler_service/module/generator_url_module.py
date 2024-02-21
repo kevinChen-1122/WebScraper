@@ -1,4 +1,6 @@
-from . import get_config_module
+import pymongo
+
+from . import get_config_module, mongo_module
 from urllib.parse import urlencode
 
 
@@ -9,5 +11,12 @@ def generate_search_url(key_word, price_start, price_end):
 
 
 def get_search_url():
+    db = mongo_module.connect_to_mongodb(database_name="cloud_service")
+    collection = db['key_word']
+    data = collection.find_one(sort=[('updated_at', pymongo.DESCENDING)])
+
+    if not data or not data.get('list'):
+        return []
+
     return [generate_search_url(item["key_word"], item["price_start"], item["price_end"]) for item in
-            get_config_module.keyword]
+            data.get('list')]

@@ -13,14 +13,10 @@ password = config['mongodb']['password']
 
 # 旋轉拍賣設定
 carousell_url = config['carousell']['home_page']
-keyword_file_path = config['carousell']['search_keyword_file_path']
 query_params_file_path = config['carousell']['query_params']
 
 with open(query_params_file_path, 'r') as json_file:
     query_params = json.load(json_file)
-
-with open(keyword_file_path, 'r') as json_file:
-    keyword = json.load(json_file)
 
 # line 通知設定
 line_notify_token = config['line']['notify_token']
