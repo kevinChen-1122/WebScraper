@@ -8,8 +8,8 @@ password =
 
 [google]
 ;google 試算表 api key
-spreadsheet_api_key = AIzaSyDzFaaPp2QK6DXWbg-ogJ7tESdCYwqh9R0
+spreadsheet_api_key =
 ;google 試算表 ID
-key_word_spreadsheet_id = 1UC3FSMHwFv1tzP4_uHcQNQdfVYUy12HxaULclP12Gyo
+key_word_spreadsheet_id =
 ;google 試算表 表格名稱
-key_word_table_name = 工作表1
+key_word_table_name =

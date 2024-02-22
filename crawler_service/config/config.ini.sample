@@ -11,4 +11,4 @@ home_page = https://tw.carousell.com
 query_params = /app/crawler_service/config/carousell_query_params.json
 
 [line]
-notify_token = hNeSveMGNaUbuoJOZ3UMmz3DgB4zxKhzhDKJV4qFmfj
+notify_token =
