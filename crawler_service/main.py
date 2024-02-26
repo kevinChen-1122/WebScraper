@@ -5,9 +5,8 @@ from datetime import datetime
 
 def start_search_product_task():
     urls = generator_url_module.get_search_url()
-
     if not urls:
-        raise Exception(f"{__name__}/{start_search_product_task().__name__}: can not get urls")
+        raise Exception("can not get urls")
 
     driver_pool = browser_pool_module.BrowserPoolModule(pool_size=6)
 
