@@ -10,7 +10,6 @@ WebScraper
 │  │  ├─ __init__.py
 │  │  ├─ get_config_module.py
 │  │  ├─ google_spreadsheets_module.py
-│  │  ├─ logger_module.py
 │  │  └─ mongo_module.py
 │  ├─ Dockerfile
 │  ├─ main.py
@@ -22,14 +21,11 @@ WebScraper
 │  │  ├─ carousell_query_params.json
 │  │  ├─ config.ini
 │  │  └─ crontab
-│  ├─ data/
-│  ├─ log/
 │  ├─ module/
 │  │  ├─ __init__.py
 │  │  ├─ browser_pool_module.py
 │  │  ├─ generator_url_module.py
 │  │  ├─ get_config_module.py
-│  │  ├─ logger_module.py
 │  │  ├─ mongo_module.py
 │  │  └─ search_product_module.py
 │  ├─ test/
@@ -42,7 +38,6 @@ WebScraper
 │  └─ config/
 │  │  └─ mongod.conf
 │  └─ data/
-│  └─ log/
 │  └─ Dockerfile
 ├─ notification_service/
 │  ├─ config/
@@ -52,7 +47,6 @@ WebScraper
 │  │  ├─ __init__.py
 │  │  ├─ get_config_module.py
 │  │  ├─ line_notify_module.py
-│  │  ├─ logger_module.py
 │  │  └─ mongo_module.py
 │  ├─ Dockerfile
 │  ├─ main.py
@@ -80,9 +74,11 @@ WebScraper
     ```
 - enter container
     ```
-    make bash service= {container_name}
+    make bash service={container_name}
     ```
   container_name :
+  - cloud-service 
   - crawler-service
   - database-service
+  - notification-service
 ---
