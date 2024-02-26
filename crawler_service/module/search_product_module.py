@@ -82,7 +82,6 @@ def search_product(url, driver_pool):
     driver = None
     try:
         driver = driver_pool.get_driver()
-        time.sleep(get_random_sleep_time())
         driver.get(url)
 
         now = datetime.now()
@@ -92,7 +91,7 @@ def search_product(url, driver_pool):
         mongo_module.insert_document(db['get_url_log'],
                                      {"search_url": url, "page": driver.page_source, "created_at": timestamp})
 
-        time.sleep(2)
+        time.sleep(3)
 
         product_list = WebDriverWait(driver, 3).until(
             EC.presence_of_all_elements_located((By.XPATH,
@@ -101,7 +100,6 @@ def search_product(url, driver_pool):
                                                  "and not(descendant::*[@data-google-query-id])]"))
         )
 
-        time.sleep(2)
         results = []
 
         for product in product_list:
