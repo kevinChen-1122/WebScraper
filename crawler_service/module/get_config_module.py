@@ -12,11 +12,8 @@ username = config['mongodb']['username']
 password = config['mongodb']['password']
 
 # 旋轉拍賣設定
-carousell_url = config['carousell']['home_page']
-query_params_file_path = config['carousell']['query_params']
+carousell_url = "https://tw.carousell.com"
+query_params_file_path = "/app/crawler_service/config/carousell_query_params.json"
 
 with open(query_params_file_path, 'r') as json_file:
     query_params = json.load(json_file)
-
-# line 通知設定
-line_notify_token = config['line']['notify_token']

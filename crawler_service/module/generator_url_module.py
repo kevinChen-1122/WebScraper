@@ -11,7 +11,7 @@ def generate_search_url(key_word, price_start, price_end):
 
 
 def get_search_url():
-    db = mongo_module.connect_to_mongodb(database_name="cloud_service")
+    db = mongo_module.connect_to_mongodb()
     collection = db['key_word']
     data = collection.find_one(sort=[('updated_at', pymongo.DESCENDING)])
 

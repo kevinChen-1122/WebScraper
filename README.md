@@ -29,7 +29,6 @@ WebScraper
 │  │  ├─ browser_pool_module.py
 │  │  ├─ generator_url_module.py
 │  │  ├─ get_config_module.py
-│  │  ├─ line_notify_module.py
 │  │  ├─ logger_module.py
 │  │  ├─ mongo_module.py
 │  │  └─ search_product_module.py
@@ -45,6 +44,20 @@ WebScraper
 │  └─ data/
 │  └─ log/
 │  └─ Dockerfile
+├─ notification_service/
+│  ├─ config/
+│  │  ├─ config.ini
+│  │  └─ crontab
+│  ├─ module/
+│  │  ├─ __init__.py
+│  │  ├─ get_config_module.py
+│  │  ├─ line_notify_module.py
+│  │  ├─ logger_module.py
+│  │  └─ mongo_module.py
+│  ├─ Dockerfile
+│  ├─ main.py
+│  ├─ README.md
+│  └─ requirements.txt
 ├─ .gitattributes
 ├─ .gitignore
 ├─ docker-compose.yml

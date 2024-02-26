@@ -55,5 +55,20 @@ services:
     networks:
       - scraper-network
 
+  notification-service:
+    container_name: notification-service
+    build:
+      context: notification_service
+      dockerfile: Dockerfile
+    volumes:
+      - ./notification_service:/app/notification_service
+    ports:
+      - "7003:7003"
+    environment:
+      - TZ=:Asia/Taipei
+      - PYTHONPATH=:/app/notification_service
+    networks:
+      - scraper-network
+
 networks:
   scraper-network:

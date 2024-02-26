@@ -1,0 +1,9 @@
+[mongodb]
+host_name = database-service
+port = 27017
+database_name = web_scraper
+username =
+password =
+
+[line]
+notify_token =

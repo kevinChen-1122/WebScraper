@@ -4,9 +4,7 @@ from . import get_config_module
 
 def connect_to_mongodb():
     try:
-        client = pymongo.MongoClient(get_config_module.mongo_host,
-                                     get_config_module.mongo_port,
-                                     username=get_config_module.username,
+        client = pymongo.MongoClient(get_config_module.mongo_host, get_config_module.mongo_port, username=get_config_module.username,
                                      password=get_config_module.password)
         db = client[get_config_module.database_name]
         return db
@@ -57,7 +55,7 @@ def delete_document(collection, query):
 
 def update_documents(collection, query):
     try:
-        bulk_operations = [pymongo.UpdateOne({"product_link": doc["product_link"]}, {"$set": doc}, upsert=True) for
+        bulk_operations = [pymongo.UpdateOne({"content": doc["content"]}, {"$set": doc}, upsert=True) for
                            doc in query]
         collection.bulk_write(bulk_operations)
     except Exception as e:

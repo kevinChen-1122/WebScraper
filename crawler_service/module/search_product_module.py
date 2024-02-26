@@ -3,7 +3,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 import random
-from . import mongo_module, line_notify_module
+from . import mongo_module
 from urllib.parse import urlparse, urlunparse
 from datetime import datetime, timedelta
 import re
@@ -88,21 +88,17 @@ def search_product(url, driver_pool):
         timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
 
         db = mongo_module.connect_to_mongodb()
-        collection = db['get_url_log']
-        mongo_module.insert_document(collection,
+        mongo_module.insert_document(db['get_url_log'],
                                      {"search_url": url, "page": driver.page_source, "created_at": timestamp})
-
-        WebDriverWait(driver, 5).until(
-            EC.presence_of_element_located((By.XPATH,
-                                            "//main[@id='main']/div[2]/div/section[3]/div[1]/div/div/div[1]/div[not("
-                                            "@data-google-query-id) and not(descendant::*[@data-google-query-id])]"))
-        )
 
         time.sleep(2)
 
-        product_list = driver.find_elements(By.XPATH,
-                                            "//main[@id='main']/div[2]/div/section[3]/div[1]/div/div/div[1]/div[not("
-                                            "@data-google-query-id) and not(descendant::*[@data-google-query-id])]")
+        product_list = WebDriverWait(driver, 3).until(
+            EC.presence_of_all_elements_located((By.XPATH,
+                                                 "//main[@id='main']/div[2]/div/section[3]/div[1]/div/div/div[1]/"
+                                                 "div[not(@data-google-query-id)"
+                                                 "and not(descendant::*[@data-google-query-id])]"))
+        )
 
         time.sleep(2)
         results = []
@@ -112,14 +108,18 @@ def search_product(url, driver_pool):
             results.append({**product_data, "page_source": product.get_attribute('outerHTML'), "created_at": timestamp})
 
             collection = db['line_notify_log']
-            msg = "新商品\n" + product_data["product_name"] + "\n" + product_data["product_link"]
+            content = "新商品\n" + product_data["product_name"] + "\n" + product_data["product_link"]
             if is_new_product(product_data["product_add_since"]) and not mongo_module.find_documents(collection,
-                                                                                                     {"msg": msg}):
-                line_notify_module.send_line_notify(msg)
+                                                                                                     {"content": content}):
+                query = {
+                    "content": content,
+                    "status": "PENDING",
+                    "created_at": timestamp
+                }
+                mongo_module.insert_document(collection, query)
 
         if results:
-            collection = db['search_product']
-            mongo_module.update_documents(collection, results)
+            mongo_module.update_documents(db['search_product'], results)
 
     except Exception as e:
         print(f"Error occurred while processing {url}: {e}")

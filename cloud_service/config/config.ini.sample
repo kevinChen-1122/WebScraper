@@ -2,7 +2,7 @@
 ;docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' database-service
 host_name = database-service
 port = 27017
-database_name = cloud_service
+database_name = web_scraper
 username =
 password =
 

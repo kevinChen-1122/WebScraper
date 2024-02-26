@@ -1,0 +1,3 @@
+TZ=Asia/Taipei
+* * * * * root /usr/local/bin/python3 /app/notification_service/main.py >> /var/log/cron.log 2>&1
+

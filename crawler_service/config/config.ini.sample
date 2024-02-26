@@ -2,13 +2,6 @@
 ;docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' database-service
 host_name = database-service
 port = 27017
-database_name = crawler_service
+database_name = web_scraper
 username =
 password =
-
-[carousell]
-home_page = https://tw.carousell.com
-query_params = /app/crawler_service/config/carousell_query_params.json
-
-[line]
-notify_token =
