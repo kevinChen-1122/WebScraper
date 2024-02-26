@@ -1,4 +1,5 @@
 import requests
+import traceback
 from . import mongo_module, get_config_module
 from datetime import datetime
 
@@ -38,5 +39,5 @@ def send_line_notify():
                                                                                                  "").lower() else None
                 data["updated_at"] = now.strftime("%Y-%m-%d %H:%M:%S")
                 mongo_module.update_documents(collection, [data])
-    except Exception as e:
-        print(f"Failed to send line notify message: {e}")
+    except Exception:
+        raise Exception(f"{traceback.format_exc()}")

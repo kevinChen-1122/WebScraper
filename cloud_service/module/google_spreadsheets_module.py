@@ -1,5 +1,6 @@
 from . import get_config_module
 import requests
+import traceback
 
 
 def get_key_word():
@@ -17,5 +18,5 @@ def get_key_word():
             raise Exception(f"google spreadsheets api request fail:{result}")
 
         return result.text
-    except Exception as error:
-        print(f"{__name__}/{get_key_word.__name__}: {error}")
+    except Exception:
+        raise Exception(f"{traceback.format_exc()}")

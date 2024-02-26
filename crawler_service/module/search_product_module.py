@@ -7,6 +7,7 @@ from . import mongo_module
 from urllib.parse import urlparse, urlunparse
 from datetime import datetime, timedelta
 import re
+import traceback
 
 
 def is_new_product(string_of_since_at):
@@ -121,9 +122,8 @@ def search_product(url, driver_pool):
         if results:
             mongo_module.update_documents(db['search_product'], results)
 
-    except Exception as e:
-        print(f"Error occurred while processing {url}: {e}")
-        raise
+    except Exception:
+        raise Exception(f"{traceback.format_exc()}")
     finally:
         if driver:
             driver.get("about:blank")

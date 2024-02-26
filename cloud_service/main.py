@@ -1,4 +1,4 @@
-from module import logger_module, google_spreadsheets_module, mongo_module
+from module import google_spreadsheets_module, mongo_module
 from datetime import datetime
 import json
 import pymongo
@@ -21,17 +21,17 @@ def update_search_product_key_word():
             timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
             mongo_module.insert_document(collection, {"list": key_word, "updated_at": timestamp})
 
-    except Exception as e:
-        new_log = logger_module.get_logger()
-        new_log.error(f"Error processing : {e}")
+    except Exception as error:
+        raise Exception(f"{error}")
 
 
 def main():
     try:
         update_search_product_key_word()
-    except Exception as e:
-        new_log = logger_module.get_logger()
-        new_log.error(f"Error processing : {e}")
+    except Exception as error:
+        now = datetime.now()
+        timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
+        print(f"[{timestamp}] - {error}")
 
 
 if __name__ == "__main__":

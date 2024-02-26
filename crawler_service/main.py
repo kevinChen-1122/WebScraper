@@ -1,5 +1,5 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from module import search_product_module, generator_url_module, logger_module, browser_pool_module, mongo_module
+from module import search_product_module, generator_url_module, browser_pool_module, mongo_module
 from datetime import datetime
 
 
@@ -18,9 +18,8 @@ def start_search_product_task():
             url = futures[future]
             try:
                 future.result()
-            except Exception as e:
-                new_log = logger_module.get_logger()
-                new_log.error(f"Error processing url {url}: {e}")
+            except Exception as error:
+                raise Exception(f"{url}\n{error}")
 
     driver_pool.close_all()
 
@@ -39,9 +38,10 @@ def main():
             db['task_log'],
             {"start": start_timestamp, "end": end_timestamp, "cost": (task_end - task_start).total_seconds()}
         )
-    except Exception as e:
-        new_log = logger_module.get_logger()
-        new_log.error(f"Error processing : {e}")
+    except Exception as error:
+        now = datetime.now()
+        timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
+        print(f"[{timestamp}] - {error}")
 
 
 if __name__ == "__main__":
