@@ -38,6 +38,6 @@ def send_line_notify():
                 data["res_json"] = response.json() if "application/json" in response.headers.get("content-type",
                                                                                                  "").lower() else None
                 data["updated_at"] = now.strftime("%Y-%m-%d %H:%M:%S")
-                mongo_module.update_documents(collection, [data])
+                mongo_module.update_document(collection, {"_id": data["_id"]}, data)
     except Exception:
         raise Exception(f"{traceback.format_exc()}")
