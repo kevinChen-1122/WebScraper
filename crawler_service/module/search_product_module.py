@@ -3,7 +3,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 import random
-from . import mongo_module
+from . import mongo_module, browser_pool_module
 from urllib.parse import urlparse, urlunparse
 from datetime import datetime, timedelta
 import re
@@ -24,7 +24,7 @@ def parse_url(url):
 
 
 def parse_relative_time(relative_time_str):
-    match = re.match(r'(\d+)\s+(\w+)\s+ago', relative_time_str)
+    match = re.match(r'(\d+)\s+(\w+)\s+ago$', relative_time_str)
     if match:
         value, unit = int(match.group(1)), match.group(2).lower()
         unit = unit.rstrip('s')
@@ -78,10 +78,10 @@ def extract_product_data(product):
     }
 
 
-def search_product(url, driver_pool):
-    driver = None
+def search_product(url):
+    global driver
     try:
-        driver = driver_pool.get_driver()
+        driver = browser_pool_module.BrowserPoolModule._create_driver()
         driver.get(url)
 
         now = datetime.now()
@@ -100,29 +100,37 @@ def search_product(url, driver_pool):
                                                  "and not(descendant::*[@data-google-query-id])]"))
         )
 
-        results = []
+        product_list_data = []
+        product_notify_data = []
+
+        collection = db['line_notify_log']
 
         for product in product_list:
             product_data = extract_product_data(product)
-            results.append({**product_data, "page_source": product.get_attribute('outerHTML'), "created_at": timestamp})
+            product_list_data.append({
+                **product_data,
+                "page_source": product.get_attribute('outerHTML'),
+                "created_at": timestamp
+            })
 
-            collection = db['line_notify_log']
             content = "新商品\n" + product_data["product_name"] + "\n" + product_data["product_link"]
             if is_new_product(product_data["product_add_since"]) and not mongo_module.find_documents(collection,
-                                                                                                     {"content": content}):
-                query = {
+                                                                                                     {
+                                                                                                         "content": content}):
+                product_notify_data.append({
                     "content": content,
                     "status": "PENDING",
                     "created_at": timestamp
-                }
-                mongo_module.insert_document(collection, query)
+                })
 
-        if results:
-            mongo_module.update_documents(db['search_product'], results)
+        if product_list_data:
+            mongo_module.update_documents(db['search_product'], product_list_data)
+
+        if product_notify_data:
+            mongo_module.insert_documents(collection, product_notify_data)
 
     except Exception:
         raise Exception(f"{traceback.format_exc()}")
     finally:
         if driver:
-            driver.get("about:blank")
-            driver_pool.release_driver(driver)
+            driver.quit()

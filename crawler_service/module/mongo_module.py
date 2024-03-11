@@ -9,6 +9,9 @@ def connect_to_mongodb():
                                      username=get_config_module.username,
                                      password=get_config_module.password)
         db = client[get_config_module.database_name]
+
+        db["key_word"].create_index([("updated_at", pymongo.DESCENDING)])
+
         return db
     except pymongo.errors.ConnectionFailure as e:
         print(f"Failed to connect to MongoDB: {e}")
