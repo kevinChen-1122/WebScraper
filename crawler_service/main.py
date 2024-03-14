@@ -1,32 +1,38 @@
-from concurrent.futures import ProcessPoolExecutor
-from module import search_product_module, generator_url_module, mongo_module
+from concurrent.futures import ThreadPoolExecutor
+from module import search_product_module, generator_url_module, mongo_module, browser_pool_module, get_config_module
 from datetime import datetime
 import cProfile
-import sys
 import io
 import pstats
 
 
 def start_search_product_task():
-    urls = generator_url_module.get_search_url()
-    if not urls:
-        raise Exception("can not get urls")
+    driver_pool = []
+    try:
+        urls = generator_url_module.get_search_url()
+        if not urls:
+            raise Exception("can not get urls")
 
-    with ProcessPoolExecutor(max_workers=6) as executor:
-        futures = [executor.submit(search_product_module.search_product, url) for url in urls]
+        driver_pool = browser_pool_module.BrowserPoolModule(pool_size=get_config_module.browser_pool_size)
 
-        for future in futures:
-            try:
-                future.result()
-            except Exception as error:
-                raise Exception(error)
+        with ThreadPoolExecutor(max_workers=get_config_module.max_workers) as executor:
+            futures = [executor.submit(search_product_module.search_product, url, driver_pool) for url in urls]
+
+            for future in futures:
+                try:
+                    future.result()
+                except Exception as error:
+                    raise Exception(error)
+
+    finally:
+        if driver_pool:
+            driver_pool.close_all()
 
 
 def main():
     try:
         task_start = datetime.now()
         start_timestamp = task_start.strftime("%Y-%m-%d %H:%M:%S")
-
         # profiler = cProfile.Profile()
         # profiler.enable()
         start_search_product_task()

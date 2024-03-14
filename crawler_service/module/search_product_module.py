@@ -2,7 +2,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
-from . import mongo_module, browser_pool_module
+from . import mongo_module
 from urllib.parse import urlparse, urlunparse
 from datetime import datetime, timedelta
 import re
@@ -50,26 +50,15 @@ def extract_product_data(product):
     product_link_element = product.find_elements(By.XPATH, ".//a[starts-with(@href, '/p')]")
     product_name_element = product.find_elements(By.XPATH, ".//img[contains(@src, 'products')]")
     price_element = product.find_elements(By.XPATH, ".//p[@title[starts-with(., 'NT$')]]")
-    product_add_since_element = product.find_elements(By.XPATH, ".//p[contains(text(), 'minute ago')"
-                                                                "or contains(text(), 'minutes ago')"
-                                                                "or contains(text(), 'second ago')"
-                                                                "or contains(text(), 'seconds ago')"
-                                                                "or contains(text(), 'hour ago')"
-                                                                "or contains(text(), 'hours ago')"
-                                                                "or contains(text(), 'day ago')"
-                                                                "or contains(text(), 'days ago')"
-                                                                "or contains(text(), 'months ago')"
-                                                                "or contains(text(), 'month ago')"
-                                                                "or contains(text(), 'year ago')"
-                                                                "or contains(text(), 'years ago')]")
+    product_add_since_element = product.find_element(By.XPATH, ".//div[1]/a[1]/div[2]/div/p")
 
     return {
         "seller_id": seller_id_element[0].text if seller_id_element else "",
         "product_link": parse_url(product_link_element[0].get_attribute("href")) if product_link_element else "",
         "product_name": product_name_element[0].get_attribute("title") if product_name_element else "",
         "price": price_element[0].text if price_element else "",
-        "product_add_at": date_format(product_add_since_element[0].text) if product_add_since_element else "",
-        "product_add_since": product_add_since_element[0].text if product_add_since_element else ""
+        "product_add_at": date_format(product_add_since_element.text) if product_add_since_element else "",
+        "product_add_since": product_add_since_element.text if product_add_since_element else ""
     }
 
 
@@ -98,9 +87,9 @@ def search_product(url, driver_pool):
 
         product_list = WebDriverWait(driver, 3).until(
             EC.presence_of_all_elements_located((By.XPATH,
-                                                 "//main[@id='main']/div[2]/div/section[3]/div[1]/div/div/div[1]/"
-                                                 "div[not(@data-google-query-id)"
-                                                 "and not(descendant::*[@data-google-query-id])]"))
+                                                 "//div[@data-testid[starts-with(., 'listing-card-')"
+                                                 "and substring-after(., 'listing-card-') ="
+                                                 "translate(substring-after(., 'listing-card-'), ' ', '')]]"))
         )
 
         for product in product_list:
@@ -133,4 +122,5 @@ def search_product(url, driver_pool):
         if product_notify_data:
             existing_contents = collection.distinct("content")
             filtered_data = [data for data in product_notify_data if data["content"] not in existing_contents]
-            mongo_module.insert_documents(collection, filtered_data)
+            if filtered_data:
+                mongo_module.insert_documents(collection, filtered_data)
