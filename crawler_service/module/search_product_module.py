@@ -79,7 +79,7 @@ def extract_product_data(product):
 
 
 def search_product(url):
-    global driver
+    driver = None
     try:
         driver = browser_pool_module.BrowserPoolModule._create_driver()
         driver.get(url)
