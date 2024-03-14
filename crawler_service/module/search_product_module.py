@@ -2,7 +2,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
-import random
 from . import mongo_module, browser_pool_module
 from urllib.parse import urlparse, urlunparse
 from datetime import datetime, timedelta
@@ -12,10 +11,6 @@ import traceback
 
 def is_new_product(string_of_since_at):
     return string_of_since_at and int(parse_relative_time(string_of_since_at)) < 300
-
-
-def get_random_sleep_time():
-    return random.randrange(3)
 
 
 def parse_url(url):
@@ -55,10 +50,10 @@ def extract_product_data(product):
     product_link_element = product.find_elements(By.XPATH, ".//a[starts-with(@href, '/p')]")
     product_name_element = product.find_elements(By.XPATH, ".//img[contains(@src, 'products')]")
     price_element = product.find_elements(By.XPATH, ".//p[@title[starts-with(., 'NT$')]]")
-    product_add_since_element = product.find_elements(By.XPATH, ".//p[contains(text(), 'second ago')"
-                                                                "or contains(text(), 'seconds ago')"
-                                                                "or contains(text(), 'minute ago')"
+    product_add_since_element = product.find_elements(By.XPATH, ".//p[contains(text(), 'minute ago')"
                                                                 "or contains(text(), 'minutes ago')"
+                                                                "or contains(text(), 'second ago')"
+                                                                "or contains(text(), 'seconds ago')"
                                                                 "or contains(text(), 'hour ago')"
                                                                 "or contains(text(), 'hours ago')"
                                                                 "or contains(text(), 'day ago')"
@@ -78,18 +73,26 @@ def extract_product_data(product):
     }
 
 
-def search_product(url):
+def search_product(url, driver_pool):
     driver = None
+
+    now = datetime.now()
+    timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
+
+    # get_page_log = {
+    #     "search_url": url,
+    #     "page": '',
+    #     "created_at": timestamp
+    # }
+    product_list_data = []
+    product_notify_data = []
+    db = mongo_module.connect_to_mongodb()
+    collection = db['line_notify_log']
+
     try:
-        driver = browser_pool_module.BrowserPoolModule._create_driver()
+        driver = driver_pool.get_driver()
         driver.get(url)
-
-        now = datetime.now()
-        timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
-
-        db = mongo_module.connect_to_mongodb()
-        mongo_module.insert_document(db['get_url_log'],
-                                     {"search_url": url, "page": driver.page_source, "created_at": timestamp})
+        # get_page_log["page"] = driver.page_source
 
         time.sleep(3)
 
@@ -100,11 +103,6 @@ def search_product(url):
                                                  "and not(descendant::*[@data-google-query-id])]"))
         )
 
-        product_list_data = []
-        product_notify_data = []
-
-        collection = db['line_notify_log']
-
         for product in product_list:
             product_data = extract_product_data(product)
             product_list_data.append({
@@ -113,24 +111,26 @@ def search_product(url):
                 "created_at": timestamp
             })
 
-            content = "新商品\n" + product_data["product_name"] + "\n" + product_data["product_link"]
-            if is_new_product(product_data["product_add_since"]) and not mongo_module.find_documents(collection,
-                                                                                                     {
-                                                                                                         "content": content}):
+            if is_new_product(product_data["product_add_since"]):
                 product_notify_data.append({
-                    "content": content,
+                    "content": product_data["product_name"] + "\n" + product_data["product_link"],
                     "status": "PENDING",
                     "created_at": timestamp
                 })
+    except Exception:
+        raise Exception(f"{traceback.format_exc()}")
+    finally:
+        if driver:
+            driver.get("about:blank")
+            driver_pool.release_driver(driver)
+
+        # if get_page_log:
+        #     mongo_module.insert_document(db['get_url_log'], get_page_log)
 
         if product_list_data:
             mongo_module.update_documents(db['search_product'], product_list_data)
 
         if product_notify_data:
-            mongo_module.insert_documents(collection, product_notify_data)
-
-    except Exception:
-        raise Exception(f"{traceback.format_exc()}")
-    finally:
-        if driver:
-            driver.quit()
+            existing_contents = collection.distinct("content")
+            filtered_data = [data for data in product_notify_data if data["content"] not in existing_contents]
+            mongo_module.insert_documents(collection, filtered_data)

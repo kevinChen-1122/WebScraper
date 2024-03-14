@@ -11,7 +11,8 @@ def connect_to_mongodb():
         db = client[get_config_module.database_name]
 
         db["key_word"].create_index([("updated_at", pymongo.DESCENDING)])
-        db["search_product"].create_index(["product_link"])
+        db["line_notify_log"].create_index(["content"])
+        db["search_product"].create_index("product_link")
 
         return db
     except pymongo.errors.ConnectionFailure as e:

@@ -1,15 +1,15 @@
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium import webdriver
-import multiprocessing
+import threading
 import random
 
 
 class BrowserPoolModule:
     def __init__(self, pool_size=2):
         self.pool_size = pool_size
-        self.manager = multiprocessing.Manager()
-        self.pool = self.manager.list()
+        self.lock = threading.Lock()
+        self.pool = []
         self._initialize()
 
     def _initialize(self):
@@ -41,15 +41,18 @@ class BrowserPoolModule:
         return driver
 
     def get_driver(self):
-        if self.pool:
-            return self.pool.pop(0)
-        else:
-            raise Exception("Browser pool is empty")
+        with self.lock:
+            if self.pool:
+                return self.pool.pop(0)
+            else:
+                raise Exception("Browser pool is empty")
 
     def release_driver(self, driver):
-        self.pool.append(driver)
+        with self.lock:
+            self.pool.append(driver)
 
     def close_all(self):
-        for driver in self.pool:
-            driver.quit()
-        self.pool.clear()
+        with self.lock:
+            for driver in self.pool:
+                driver.quit()
+            self.pool.clear()
