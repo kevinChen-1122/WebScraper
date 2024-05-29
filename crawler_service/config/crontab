@@ -1,3 +1,2 @@
 TZ=Asia/Taipei
-*/5 * * * * root /usr/bin/timeout 300 /usr/local/bin/python3 /app/crawler_service/main.py >> /var/log/cron.log 2>&1
-
+*/5 * * * * root cd /app/crawler_service && /usr/local/bin/scrapy crawl search_product >> /var/log/cron.log 2>&1

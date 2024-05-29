@@ -4,8 +4,6 @@ WORKDIR /app/crawler_service
 
 # install chromium and driver
 RUN apt-get update && apt-get install -y \
-    chromium \
-    chromium-driver \
     vim \
     tzdata \
     cron
@@ -20,4 +18,5 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 
 RUN chmod 0644 /etc/cron.d/crontab
 
+# scrapy crawl search_product
 CMD ["/usr/sbin/cron", "-f"]

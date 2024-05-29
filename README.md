@@ -17,23 +17,27 @@ WebScraper
 │  └─ requirements.txt
 ├─ crawler_service/
 │  ├─ config/
-│  │  ├─ __init__.py
 │  │  ├─ carousell_query_params.json
 │  │  ├─ config.ini
 │  │  └─ crontab
+│  ├─ crawler/
+│  │  ├─ spiders/
+│  │  │  ├─ __init__.py
+│  │  │  └─ search_product.py
+│  │  ├─ __init__.py
+│  │  ├─ items.py
+│  │  ├─ middlewares.py
+│  │  ├─ pipelines.py
+│  │  └─ settings.py
 │  ├─ module/
 │  │  ├─ __init__.py
-│  │  ├─ browser_pool_module.py
 │  │  ├─ generator_url_module.py
 │  │  ├─ get_config_module.py
-│  │  ├─ mongo_module.py
 │  │  └─ search_product_module.py
-│  ├─ test/
-│  │  └─ __init__.py
 │  ├─ Dockerfile
-│  ├─ main.py
 │  ├─ README.md
-│  └─ requirements.txt
+│  ├─ requirements.txt
+│  └─ scrapy.cfg
 ├─ database_service/
 │  └─ config/
 │  │  └─ mongod.conf

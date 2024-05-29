@@ -8,13 +8,15 @@ services:
     volumes:
       - ./crawler_service:/app/crawler_service
     ports:
-      - "7001:7001"
+      - "7001:8005"
     environment:
       - DISPLAY=:99
       - TZ=:Asia/Taipei
       - PYTHONPATH=:/app/crawler_service
     networks:
       - scraper-network
+    depends_on:
+      - splash
 
   database-service:
     container_name: database-service
@@ -67,6 +69,15 @@ services:
     environment:
       - TZ=:Asia/Taipei
       - PYTHONPATH=:/app/notification_service
+    networks:
+      - scraper-network
+
+  splash:
+    image: scrapinghub/splash
+    ports:
+      - "8050:8050"
+    environment:
+      - SPLASH_MAXRSS=2048
     networks:
       - scraper-network
 
