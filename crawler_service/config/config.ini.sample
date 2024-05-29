@@ -5,7 +5,3 @@ port = 27017
 database_name = web_scraper
 username =
 password =
-
-[workers]
-max_workers = 5
-browser_pool_size = 5

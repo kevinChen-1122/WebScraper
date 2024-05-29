@@ -6,3 +6,4 @@ __pycache__/
 /crawler_service/log/
 /crawler_service/data/
 /database_service/data/
+*.ini
