@@ -1,4 +1,4 @@
-from urllib.parse import urlparse, urlunparse
+import urllib.parse
 from datetime import datetime, timedelta
 import re
 
@@ -8,8 +8,8 @@ def is_new_product(string_of_since_at):
 
 
 def parse_url(url):
-    parsed_url = urlparse(url)
-    return urlunparse(parsed_url._replace(query=''))
+    parsed_url = urllib.parse.urlunparse(urllib.parse.urlparse(url)._replace(query=''))
+    return urllib.parse.quote(parsed_url, safe=':/')
 
 
 def parse_relative_time(relative_time_str):
