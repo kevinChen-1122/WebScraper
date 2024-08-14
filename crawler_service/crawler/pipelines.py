@@ -33,7 +33,7 @@ class MongoPipeline:
 
         if search_product_module.is_new_product(item["product_add_since"]):
             line_notify_data = {
-                "content": item["product_name"] + "\n" + item["product_link"],
+                "content": item["product_name"] + "\n" + item["price"] + "\n" + item["seller_id"] + "\n" + item["product_link"],
                 "status": "PENDING",
                 "created_at": item["created_at"]
             }
