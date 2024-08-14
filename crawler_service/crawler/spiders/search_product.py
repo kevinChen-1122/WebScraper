@@ -1,8 +1,12 @@
+from typing import Union
+
 import scrapy
+from scrapy import Spider
 from scrapy_splash import SplashRequest
 from datetime import datetime
 from crawler.items import ProductItem
 from module import generator_url_module, search_product_module, get_config_module
+from twisted.internet.defer import Deferred
 
 
 class SearchProduct(scrapy.Spider):
@@ -10,6 +14,7 @@ class SearchProduct(scrapy.Spider):
     urls = generator_url_module.get_search_url()
     if not urls:
         raise Exception("can not get urls")
+    # start_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     def start_requests(self):
         headers = {
@@ -39,3 +44,7 @@ class SearchProduct(scrapy.Spider):
                 'product_add_since': product.xpath(".//div[1]/a[1]/div[2]/div/p/text()").extract_first(default=""),
                 'created_at': timestamp
             }
+
+    # def close(self, reason: str):
+    #     end_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    #     self.logger.info(f'task start at {self.start_time} end at {end_time}')
