@@ -32,14 +32,14 @@ class MongoPipeline:
     def process_item(self, item, spider):
 
         if search_product_module.is_new_product(item["product_add_since"]):
-            line_notify_data = {
-                "content": item["product_name"] + "\n" + item["price"] + "\n" + item["seller_id"] + "\n" + item["product_link"],
+            notify_data = {
+                "item": item,
                 "status": "PENDING",
                 "created_at": item["created_at"]
             }
-            self.db['line_notify_log'].update_one(
-                {"product_link": item["product_link"]},
-                {"$set": line_notify_data},
+            self.db['notify_log'].update_one(
+                {"item.product_link": item["product_link"]},
+                {"$set": notify_data},
                 upsert=True
             )
 

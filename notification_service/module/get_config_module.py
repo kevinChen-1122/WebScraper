@@ -12,3 +12,5 @@ password = config['mongodb']['password']
 
 # line 通知設定
 line_notify_token = config['line']['notify_token']
+
+discord_bot_token = config['discord']['bot_token']

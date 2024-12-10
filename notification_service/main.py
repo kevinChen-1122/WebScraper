@@ -1,15 +1,11 @@
-from module import mongo_module, line_notify_module
-from datetime import datetime
+import asyncio
+from module import discord_module, get_config_module
 
 
-def main():
-    try:
-        line_notify_module.send_line_notify()
-    except Exception as error:
-        now = datetime.now()
-        timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
-        print(f"[{timestamp}] - {error}")
+async def main():
+    bot = discord_module.Discord(token=get_config_module.discord_bot_token)
+    await bot.start()
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

@@ -7,3 +7,6 @@ password =
 
 [line]
 notify_token =
+
+[discord]
+bot_token =

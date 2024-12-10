@@ -1,2 +1,5 @@
 pymongo
 requests
+discord.py==2.4.0
+aiohttp==3.11.10
+audioop-lts; python_version>='3.13'

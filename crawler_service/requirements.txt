@@ -1,4 +1,5 @@
 pymongo
 requests
-scrapy
-scrapy-splash
+scrapy==2.11.2
+scrapy-splash==0.9.0
+six==1.16.0
