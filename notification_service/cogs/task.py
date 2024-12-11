@@ -35,7 +35,7 @@ class Task(commands.Cog):
                 ).add_field(
                     name='價格',
                     value=data['item']['price'],
-                    inline = True
+                    inline=True
                 ) for data in data_list
             ]
             if embeds:
