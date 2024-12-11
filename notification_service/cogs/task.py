@@ -26,11 +26,16 @@ class Task(commands.Cog):
             channel = self.bot.get_channel(channel_id)
             embeds = [
                 discord.Embed(
-                    title='新商品',
-                    description=f"名稱 : {data['item']['product_name']}\n"
-                                f"賣家 : {data['item']['seller_id']}\n"
-                                f"價格 : {data['item']['price']}\n"
-                                f"連結 : {data['item']['product_link']}"
+                    title=data['item']['product_name'],
+                    description=data['item']['product_link']
+                ).add_field(
+                    name='賣家',
+                    value=data['item']['seller_id'],
+                    inline=True
+                ).add_field(
+                    name='價格',
+                    value=data['item']['price'],
+                    inline = True
                 ) for data in data_list
             ]
             if embeds:
