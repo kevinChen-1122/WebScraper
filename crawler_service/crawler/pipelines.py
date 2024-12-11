@@ -39,7 +39,7 @@ class MongoPipeline:
             }
             self.db['notify_log'].update_one(
                 {"item.product_link": item["product_link"]},
-                {"$set": notify_data},
+                {"$setOnInsert": notify_data},
                 upsert=True
             )
 
