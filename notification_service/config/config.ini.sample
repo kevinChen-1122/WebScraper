@@ -10,3 +10,4 @@ notify_token =
 
 [discord]
 bot_token =
+channel_id =

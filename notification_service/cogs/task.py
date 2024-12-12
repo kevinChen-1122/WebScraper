@@ -1,7 +1,7 @@
 import time
 import discord
 from discord.ext import tasks, commands
-from module import mongo_module
+from module import mongo_module, get_config_module
 
 
 class Task(commands.Cog):
@@ -16,13 +16,14 @@ class Task(commands.Cog):
         self.notify_new_product.cancel()
 
     # 定義要執行的循環函式
-    @tasks.loop(minutes=1)
+    @tasks.loop(seconds=10)
     async def notify_new_product(self):
         db = mongo_module.connect_to_mongodb()
         collection = db['notify_log']
-        data_list = mongo_module.find_documents(collection, {"status": "PENDING"})
-        if data_list:
-            channel_id = 533147349590081538
+        data_list = list(collection.find({"status": "PENDING"}).limit(10))
+        channel_id = get_config_module.discord_channel_id
+
+        if data_list and channel_id:
             channel = self.bot.get_channel(channel_id)
             embeds = [
                 discord.Embed(

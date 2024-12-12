@@ -14,3 +14,4 @@ password = config['mongodb']['password']
 line_notify_token = config['line']['notify_token']
 
 discord_bot_token = config['discord']['bot_token']
+discord_channel_id = int(config['discord']['channel_id'])
