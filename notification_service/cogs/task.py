@@ -16,11 +16,11 @@ class Task(commands.Cog):
         self.notify_new_product.cancel()
 
     # 定義要執行的循環函式
-    @tasks.loop(seconds=10)
+    @tasks.loop(minutes=1)
     async def notify_new_product(self):
         db = mongo_module.connect_to_mongodb()
         collection = db['notify_log']
-        data_list = list(collection.find({"status": "PENDING"}).limit(10))
+        data_list = list(collection.find({"status": "PENDING"}))
         channel_id = get_config_module.discord_channel_id
 
         if data_list and channel_id:
@@ -40,7 +40,10 @@ class Task(commands.Cog):
                 ) for data in data_list
             ]
             if embeds:
-                await channel.send(embeds=embeds)
+
+                for i in range(0, len(embeds), 10):
+                    batch = embeds[i:i + 10]
+                    await channel.send(embeds=batch)
                 ids_to_update = [data['_id'] for data in data_list]
                 collection.update_many(
                     {"_id": {"$in": ids_to_update}},
